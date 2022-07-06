@@ -2,11 +2,12 @@
   <interact
     draggable
     :dragOption="dragOption"
-    @resizemove="resizemove"
     @dragmove="dragmove"
+    @resizemove="resizemove"
+    @mousedown.native="setWindowActive"
     :style="style"
   >
-    <div class="window" @click="setWindowActive">
+    <div class="window">
       <div
         class="window-toolbar"
         @mousedown="mousedown"
@@ -29,7 +30,7 @@
           <slot name="title"></slot>
         </div>
         <div class="triple-button">
-          <!-- <div class="button-hide">
+          <div class="button-hide" @click="setMinimize">
             <span
               style="
                 height: 2px;
@@ -39,7 +40,7 @@
               "
             ></span>
           </div>
-          <div class="button-expand">
+          <!-- <div class="button-expand">
             <i
               style="
                 height: 10px;
@@ -76,6 +77,7 @@ export default {
       dragOption: {
         modifiers: [
           interact.modifiers.restrictRect({
+            restriction: "#desktop-screen",
             endOnly: true,
           }),
         ],
@@ -84,20 +86,22 @@ export default {
       x: 0,
       y: 0,
       left: Math.random() * (30 - 8) + 8,
-      top: Math.random() * (20 - 8) + 8,
+      top: Math.random() * (30 - 8) + 9,
       dragging: false,
     };
   },
   computed: {
-    ...mapGetters(["activeWindow"]),
+    ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
         transform: `translate(${this.x}px, ${this.y}px)`,
-        zIndex: this.windowId != this.activeWindow ? 1 : 8,
         left: this.left + "%",
         top: this.top + "vh",
       };
     },
+  },
+  created() {
+    this.window = this.getWindowById(this.windowId);
   },
   methods: {
     dragmove(event) {
@@ -113,12 +117,22 @@ export default {
     resizemove(event) {
       this.x += event.deltaRect.left;
       this.y += event.deltaRect.top;
+      console.log(1);
     },
     setWindowActive() {
+      this.$store.commit("SET_ZINDEX_WINDOW", this.windowId);
       this.$store.commit("SET_ACTVIE_WINDOW", this.windowId);
     },
-    closeWindowActive() {
+    closeWindowActive(event) {
+      event.stopPropagation();
       this.$store.commit("CLOSE_ACTVIE_WINDOW", this.windowId);
+    },
+    setMinimize(event) {
+      event.stopPropagation();
+      this.$store.commit("SET_WINDOW_STATE", {
+        windowId: this.windowId,
+        windowState: "minimize",
+      });
     },
   },
 };
