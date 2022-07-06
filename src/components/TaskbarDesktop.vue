@@ -12,16 +12,16 @@
       </div>
       <div
         ref="taskbarItemRef"
-        v-for="item in activeWindows"
-        @click="setActiveMenu(item.windowId)"
-        class="taskbar-item-active"
+        v-for="window in activeWindows"
+        @click="setActiveMenu(window.windowId)"
+        class="taskbar-item-active item"
         :class="{
-          'taskbar-item-active-depressed': activeWindow === item.windowId,
+          'taskbar-item-active-depressed': activeWindow == window.windowId,
         }"
-        :key="item.windowId"
+        :key="window.windowId"
       >
-        <i class="icon" :class="item.windowIcon"></i>
-        <span>{{ item.windowTitle }}</span>
+        <i class="icon" :class="window.windowIcon"></i>
+        <span>{{ window.windowTitle }}</span>
       </div>
       <div class="taskbar-time">
         <time ref="time"> {{ time }} </time>
@@ -43,6 +43,8 @@ export default {
   name: "TaskbarDesktop",
   data() {
     return {
+      window: {},
+      taskbarActive: false,
       time: moment().format("hh:mm A"),
       startMenuActive: false,
     };
@@ -59,6 +61,10 @@ export default {
   methods: {
     setActiveMenu(windowId) {
       this.$store.commit("SET_ACTVIE_WINDOW", windowId);
+      this.$store.commit("SET_WINDOW_STATE", {
+        windowId: windowId,
+        windowState: "open",
+      });
     },
     onActiveStartMenu() {
       this.startMenuActive = !this.startMenuActive;
@@ -66,13 +72,15 @@ export default {
     checkOutsite(event) {
       const startMenuRef = this.$refs.startMenuRef;
       const taskbarStartMenuRef = this.$refs.taskbarStartMenuRef;
-      if (
-        !startMenuRef.contains(event.target) &&
-        !taskbarStartMenuRef.contains(event.target)
-      ) {
-        this.startMenuActive = false;
-      } else {
-        this.$store.commit("SET_ACTVIE_WINDOW", "");
+      if (startMenuRef && taskbarStartMenuRef) {
+        if (
+          !startMenuRef.contains(event.target) &&
+          !taskbarStartMenuRef.contains(event.target)
+        ) {
+          this.startMenuActive = false;
+        } else {
+          this.$store.commit("SET_ACTVIE_WINDOW", "");
+        }
       }
     },
   },
@@ -82,7 +90,7 @@ export default {
 <style lang="scss" scoped>
 .taskbar {
   width: 100%;
-  height: 3.5rem;
+  height: 4rem;
   background: silver;
   border-top: 0.2rem solid #fafafa;
   z-index: 100;
@@ -99,7 +107,7 @@ export default {
     margin: 0.5rem;
     margin-right: 0;
     padding: 0 0.8rem;
-    height: 2.5rem;
+    height: 3rem;
     box-shadow: 0.1rem 0.1rem #000;
     border-top: 0.1rem solid #fafafa;
     border-left: 0.1rem solid #fafafa;
@@ -110,14 +118,21 @@ export default {
     justify-content: flex-start;
     align-items: center;
     cursor: pointer;
+    padding-bottom: 0.2rem;
     gap: 0.5rem;
 
-    span {
-      width: calc(100% - 18px);
-      margin-bottom: -0.2rem;
-      white-space: nowrap;
-      overflow: hidden !important;
-      text-overflow: ellipsis;
+    @media (max-width: 768px) {
+      width: 10rem;
+    }
+
+    &.item {
+      span {
+        width: calc(100% - 18px);
+        margin-bottom: -0.2rem;
+        white-space: nowrap;
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+      }
     }
 
     &:active {
@@ -134,10 +149,11 @@ export default {
     }
 
     &.start-menu {
-      width: 8rem;
+      width: 7rem;
       justify-content: center;
       span {
         width: auto;
+        margin-bottom: -0.2rem;
       }
     }
   }
@@ -145,8 +161,8 @@ export default {
   &-time {
     margin-left: auto;
     margin-right: 0.5rem;
-    padding: 0 0.8rem;
-    height: 2.5rem;
+    padding: 0 1rem;
+    height: 3rem;
     background: silver;
     border-right: 0.15rem solid #fafafa;
     border-bottom: 0.15rem solid #fafafa;
@@ -179,8 +195,8 @@ export default {
     align-items: flex-start;
     font-size: 12px;
     position: absolute;
-    bottom: 3.5rem;
-    z-index: 99;
+    bottom: 4rem;
+    z-index: 99999;
     visibility: hidden;
 
     &.start-menu-active {
