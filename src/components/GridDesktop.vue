@@ -26,6 +26,10 @@ export default {
     setActiveWindow(window, e) {
       e.stopPropagation();
       this.$store.commit("SET_ACTVIE_WINDOW", window.windowId);
+      this.$store.commit("SET_WINDOW_STATE", {
+        windowId: window.windowId,
+        windowState: "open",
+      });
       this.$store.commit("PUSH_ACTVIE_WINDOW", window);
       setTimeout(() => {
         this.$store.commit("SET_ZINDEX_WINDOW", window.windowId);
