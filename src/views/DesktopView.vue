@@ -1,21 +1,27 @@
 <template>
   <div class="desktop">
-    <div class="desktop-screen">
+    <div class="desktop-screen" id="desktop-screen">
       <window-desktop
-        v-for="item in activeWindows"
-        :iconName="item.windowIcon"
-        :windowId="item.windowId"
-        :key="item.windowId"
+        v-for="window in activeWindows"
+        :iconName="window.windowIcon"
+        :windowId="window.windowId"
+        :key="window.windowId"
+        :id="window.windowId"
+        :class="{
+          minimize: window.windowState == 'minimize',
+        }"
       >
-        <template v-slot:title>{{ item.windowTitle }}</template>
-        <template v-slot:content>{{ item.windowContent }}</template>
+        <template v-slot:title>{{ window.windowTitle }}</template>
+        <template v-slot:content>{{ window.windowContent }}</template>
       </window-desktop>
+      <grid-desktop></grid-desktop>
     </div>
     <taskbar-desktop></taskbar-desktop>
   </div>
 </template>
 
 <script>
+import GridDesktop from "@/components/GridDesktop.vue";
 import WindowDesktop from "@/components/WindowDesktop.vue";
 import TaskbarDesktop from "@/components/TaskbarDesktop.vue";
 import { mapGetters } from "vuex";
@@ -23,8 +29,9 @@ import { mapGetters } from "vuex";
 export default {
   name: "DesktopView",
   components: {
-    "window-desktop": WindowDesktop,
-    "taskbar-desktop": TaskbarDesktop,
+    GridDesktop,
+    WindowDesktop,
+    TaskbarDesktop,
   },
   computed: {
     ...mapGetters(["activeWindows", "activeWindow"]),
@@ -44,5 +51,9 @@ export default {
     height: 100%;
     background: #018281;
   }
+}
+
+.minimize {
+  display: none;
 }
 </style>
