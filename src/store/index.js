@@ -15,6 +15,7 @@ export default new Vuex.Store({
         windowTitle: "Title",
         windowContent: "Content...",
         windowIcon: "icon-biography",
+        windowFullscreen: false,
       },
       {
         windowId: "www",
@@ -22,6 +23,7 @@ export default new Vuex.Store({
         windowTitle: "WWW",
         windowContent: "Content WWW...",
         windowIcon: "icon-document",
+        windowFullscreen: false,
       },
     ],
   },
@@ -64,12 +66,21 @@ export default new Vuex.Store({
       state.activeWindows = filtered;
     },
     SET_WINDOW_STATE(state, payload) {
-      const updated = state.activeWindows.map((x) =>
-        x.windowId == payload.windowId
-          ? { ...x, windowState: payload.windowState }
-          : x
-      );
-      state.activeWindows = updated;
+      if (payload.windowState != "maximize") {
+        const updated = state.activeWindows.map((x) =>
+          x.windowId == payload.windowId
+            ? { ...x, windowState: payload.windowState }
+            : x
+        );
+        state.activeWindows = updated;
+      } else {
+        const updated = state.activeWindows.map((x) => {
+          return x.windowId == payload.windowId
+            ? { ...x, windowFullscreen: !x.windowFullscreen }
+            : x;
+        });
+        state.activeWindows = updated;
+      }
       if (payload.windowState == "open") {
         this.commit("SET_ZINDEX_WINDOW", payload.windowId);
       } else if (payload.windowState == "minimize") {

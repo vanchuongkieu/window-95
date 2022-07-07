@@ -67,7 +67,6 @@ export default {
   name: "TaskbarDesktop",
   data() {
     return {
-      toggle: false,
       window: {},
       taskbarActive: false,
       time: moment().format("hh:mm A"),

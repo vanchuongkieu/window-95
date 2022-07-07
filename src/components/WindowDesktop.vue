@@ -3,7 +3,6 @@
     draggable
     :dragOption="dragOption"
     @dragmove="dragmove"
-    @resizemove="resizemove"
     @mousedown.native="setWindowActive"
     :style="style"
   >
@@ -40,7 +39,7 @@
               "
             ></span>
           </div>
-          <!-- <div class="button-expand">
+          <div class="button-expand" @click="setMaximize">
             <i
               style="
                 height: 10px;
@@ -52,7 +51,7 @@
                 border-top: black 2px solid;
               "
             ></i>
-          </div> -->
+          </div>
           <div class="button-close" @click="closeWindowActive">x</div>
         </div>
       </div>
@@ -83,10 +82,12 @@ export default {
         ],
         allowFrom: ".window-toolbar",
       },
+      tempX: 0,
+      tempY: 0,
       x: 0,
       y: 0,
-      left: Math.random() * (30 - 8) + 8,
-      top: Math.random() * (30 - 8) + 9,
+      left: Math.random() * (15 - 2) + 2,
+      top: Math.random() * (15 - 2) + 2,
       dragging: false,
     };
   },
@@ -94,9 +95,7 @@ export default {
     ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
-        transform: `translate(${this.x}px, ${this.y}px)`,
-        left: this.left + "%",
-        top: this.top + "vh",
+        "--transform": `translate(${this.x}px, ${this.y}px)`,
       };
     },
   },
@@ -114,11 +113,6 @@ export default {
     mousedown() {
       this.dragging = true;
     },
-    resizemove(event) {
-      this.x += event.deltaRect.left;
-      this.y += event.deltaRect.top;
-      console.log(1);
-    },
     setWindowActive() {
       this.$store.commit("SET_ZINDEX_WINDOW", this.windowId);
       this.$store.commit("SET_ACTVIE_WINDOW", this.windowId);
@@ -127,12 +121,30 @@ export default {
       event.stopPropagation();
       this.$store.commit("CLOSE_ACTVIE_WINDOW", this.windowId);
     },
-    setMinimize(event) {
+    setStateWindow(action, event) {
       event.stopPropagation();
       this.$store.commit("SET_WINDOW_STATE", {
         windowId: this.windowId,
-        windowState: "minimize",
+        windowState: action,
       });
+    },
+    setMinimize(event) {
+      this.setStateWindow("minimize", event);
+    },
+    setMaximize(event) {
+      if (!this.window.windowFullscreen) {
+        this.setStateWindow("maximize", event);
+        this.x = this.tempX;
+        this.y = this.tempY;
+      } else {
+        this.setStateWindow("maximize", event);
+        const tempX = this.x;
+        const tempY = this.y;
+        this.tempX = tempX;
+        this.tempY = tempY;
+        this.x = 0;
+        this.y = 0;
+      }
     },
   },
 };
@@ -146,6 +158,9 @@ export default {
   top: 17vh;
   z-index: 8;
   position: absolute;
+  animation: minimizeOpen 250ms forwards;
+  transition: width 250ms ease-in-out, height 250ms ease-in-out,
+    left 200ms ease-in-out, top 200ms ease-in-out;
 
   @media (max-width: 768px) {
     width: 90vw;
@@ -155,6 +170,37 @@ export default {
   @media (max-width: 968px) {
     width: 80vw;
     left: 10%;
+  }
+
+  &.minimize {
+    animation: minimizeClose 250ms forwards;
+  }
+
+  @keyframes minimizeClose {
+    0% {
+      transform: var(--transform) scale(1);
+    }
+    100% {
+      transform: var(--transform) scale(0);
+      display: none;
+    }
+  }
+
+  @keyframes minimizeOpen {
+    0% {
+      transform: var(--transform) scale(0);
+      display: none;
+    }
+    100% {
+      transform: var(--transform) scale(1);
+    }
+  }
+
+  &.maximize {
+    width: 100%;
+    height: 100vh;
+    left: 0 !important;
+    top: 0 !important;
   }
 }
 

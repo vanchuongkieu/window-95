@@ -9,6 +9,7 @@
         :id="window.windowId"
         :class="{
           minimize: window.windowState == 'minimize',
+          maximize: window.windowFullscreen,
         }"
       >
         <template v-slot:title>{{ window.windowTitle }}</template>
@@ -51,9 +52,5 @@ export default {
     height: 100%;
     background: #018281;
   }
-}
-
-.minimize {
-  display: none;
 }
 </style>
