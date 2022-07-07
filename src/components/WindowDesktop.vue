@@ -86,8 +86,8 @@ export default {
       tempY: 0,
       x: 0,
       y: 0,
-      left: Math.random() * (15 - 2) + 2,
-      top: Math.random() * (15 - 2) + 2,
+      left: Math.random() * 20,
+      top: Math.random() * 20,
       dragging: false,
     };
   },
@@ -95,6 +95,8 @@ export default {
     ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
+        top: this.top + "%",
+        left: this.left + "%",
         "--transform": `translate(${this.x}px, ${this.y}px)`,
       };
     },
