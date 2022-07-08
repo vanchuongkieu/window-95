@@ -2,13 +2,18 @@
   <interact
     draggable
     :dragOption="dragOption"
-    @dragmove="dragmove"
     @mousedown.native="setWindowActive"
+    @dragmove="dragmove"
     :style="style"
+    :class="{
+      minimize: getWindowById(windowId).windowState == 'minimize',
+      maximize: getWindowById(windowId).windowFullscreen,
+    }"
   >
     <div class="window">
       <div
         class="window-toolbar"
+        @dblclick="setMaximize"
         @mousedown="mousedown"
         @mouseup="mouseup"
         :class="{
@@ -25,8 +30,12 @@
             gap: 5px;
           "
         >
-          <div v-if="iconName" class="icon" :class="iconName"></div>
-          <slot name="title"></slot>
+          <div
+            class="icon"
+            v-if="window.windowIcon"
+            :class="window.windowIcon"
+          ></div>
+          {{ window.windowTitle }}
         </div>
         <div class="triple-button">
           <div class="button-hide" @click="setMinimize">
@@ -69,8 +78,7 @@ import interact from "interactjs";
 import { mapGetters } from "vuex";
 
 export default {
-  name: "WindowDesktop",
-  props: ["iconName", "windowId"],
+  props: ["windowId"],
   data() {
     return {
       dragOption: {
@@ -91,18 +99,18 @@ export default {
       dragging: false,
     };
   },
+  created() {
+    this.window = this.getWindowById(this.windowId);
+  },
   computed: {
     ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
-        top: this.top + "%",
-        left: this.left + "%",
+        "--top": this.top + "%",
+        "--left": this.left + "%",
         "--transform": `translate(${this.x}px, ${this.y}px)`,
       };
     },
-  },
-  created() {
-    this.window = this.getWindowById(this.windowId);
   },
   methods: {
     dragmove(event) {
@@ -117,11 +125,11 @@ export default {
     },
     setWindowActive() {
       this.$store.commit("SET_ZINDEX_WINDOW", this.windowId);
-      this.$store.commit("SET_ACTVIE_WINDOW", this.windowId);
+      this.$store.commit("SET_ACTIVE_WINDOW", this.windowId);
     },
     closeWindowActive(event) {
       event.stopPropagation();
-      this.$store.commit("CLOSE_ACTVIE_WINDOW", this.windowId);
+      this.$store.commit("CLOSE_ACTIVE_WINDOW", this.windowId);
     },
     setStateWindow(action, event) {
       event.stopPropagation();
@@ -156,9 +164,8 @@ export default {
 .interact {
   height: 60vh;
   width: 60vw;
-  left: 20%;
-  top: 17vh;
-  z-index: 8;
+  left: var(--left);
+  top: var(--top);
   position: absolute;
   animation: minimizeOpen 250ms forwards;
   transition: width 250ms ease-in-out, height 250ms ease-in-out,
@@ -175,7 +182,7 @@ export default {
   }
 
   &.minimize {
-    animation: minimizeClose 250ms forwards;
+    animation: minimizeClose 450ms forwards;
   }
 
   @keyframes minimizeClose {
@@ -183,6 +190,7 @@ export default {
       transform: var(--transform) scale(1);
     }
     100% {
+      top: 100%;
       transform: var(--transform) scale(0);
       display: none;
     }
@@ -190,7 +198,8 @@ export default {
 
   @keyframes minimizeOpen {
     0% {
-      transform: var(--transform) scale(0);
+      top: 100%;
+      transform: var(--transform) scale(0.5);
       display: none;
     }
     100% {
@@ -269,8 +278,6 @@ export default {
         font-size: 1.2rem;
         cursor: pointer;
 
-        &:active,
-        &:active,
         &:active {
           border-radius: 0px;
           background: rgb(192, 192, 192);

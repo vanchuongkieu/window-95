@@ -1,20 +1,15 @@
 <template>
   <div class="desktop">
     <div class="desktop-screen" id="desktop-screen">
-      <window-desktop
-        v-for="window in activeWindows"
-        :iconName="window.windowIcon"
-        :windowId="window.windowId"
-        :key="window.windowId"
-        :id="window.windowId"
-        :class="{
-          minimize: window.windowState == 'minimize',
-          maximize: window.windowFullscreen,
-        }"
-      >
-        <template v-slot:title>{{ window.windowTitle }}</template>
-        <template v-slot:content>{{ window.windowContent }}</template>
-      </window-desktop>
+      <div v-for="window in activeWindows" :key="window.key">
+        <component
+          :is="window.windowComponent"
+          :windowId="window.windowId"
+          :id="window.windowId"
+        >
+          <component :is="window.windowContent" slot="content"></component>
+        </component>
+      </div>
       <grid-desktop></grid-desktop>
     </div>
     <taskbar-desktop></taskbar-desktop>
@@ -22,17 +17,22 @@
 </template>
 
 <script>
-import GridDesktop from "@/components/GridDesktop.vue";
-import WindowDesktop from "@/components/WindowDesktop.vue";
-import TaskbarDesktop from "@/components/TaskbarDesktop.vue";
+import GridDesktop from "@/components/templates/GridDesktop.vue";
+import WindowDesktop from "@/components/templates/WindowDesktop.vue";
+import TaskbarDesktop from "@/components/templates/TaskbarDesktop.vue";
+
+import DocumentFolder from "@/components/DocumentFolder.vue";
+import ProfileFolder from "@/components/ProfileFolder.vue";
+
 import { mapGetters } from "vuex";
 
 export default {
-  name: "DesktopView",
   components: {
     GridDesktop,
     WindowDesktop,
     TaskbarDesktop,
+    DocumentFolder,
+    ProfileFolder,
   },
   computed: {
     ...mapGetters(["activeWindows", "activeWindow"]),

@@ -10,22 +10,25 @@ export default new Vuex.Store({
     activeWindows: [],
     windowList: [
       {
-        windowId: "hello",
-        windowState: "open",
-        windowTitle: "Title",
-        windowContent: "Content...",
+        windowId: "profile",
+        windowState: "close",
+        windowTitle: "Profile",
+        windowContent: "ProfileFolder",
+        windowComponent: "WindowDesktop",
         windowIcon: "icon-biography",
         windowFullscreen: false,
       },
       {
-        windowId: "www",
-        windowState: "open",
-        windowTitle: "WWW",
-        windowContent: "Content WWW...",
+        windowId: "documents",
+        windowState: "close",
+        windowTitle: "My Documents",
+        windowContent: "DocumentFolder",
+        windowComponent: "WindowDesktop",
         windowIcon: "icon-document",
         windowFullscreen: false,
       },
     ],
+    startMenuActive: false,
   },
   getters: {
     getWindowById(state) {
@@ -42,55 +45,63 @@ export default new Vuex.Store({
     windowList(state) {
       return state.windowList;
     },
+    startMenuActive(state) {
+      return state.startMenuActive;
+    },
   },
   mutations: {
-    SET_ZINDEX_WINDOW(state, window) {
-      state.zIndex += 1;
-      document.getElementById(window).style.zIndex = state.zIndex;
+    START_MENU_ACTIVE(state, active) {
+      state.startMenuActive = active;
     },
-    SET_ACTVIE_WINDOW(state, window) {
+    SET_ZINDEX_WINDOW(state, windowId) {
+      state.zIndex += 1;
+      document.getElementById(windowId).style.zIndex = state.zIndex;
+    },
+    SET_ACTIVE_WINDOW(state, window) {
       state.activeWindow = window;
     },
-    PUSH_ACTVIE_WINDOW(state, window) {
+    PUSH_ACTIVE_WINDOW(state, payload) {
       const findedWindow = state.activeWindows.find(
-        (x) => x.windowId == window.windowId
+        (window) => window.windowId == payload.windowId
       );
       if (!findedWindow) {
-        state.activeWindows.push(window);
+        state.activeWindows.push(payload);
       }
     },
-    CLOSE_ACTVIE_WINDOW(state, window) {
+    CLOSE_ACTIVE_WINDOW(state, windowId) {
       const filtered = state.activeWindows.filter(
-        (item) => item.windowId !== window
+        (item) => item.windowId != windowId
       );
       state.activeWindows = filtered;
+      if (state.activeWindows.length == 0) {
+        state.zIndex = 2;
+      }
+    },
+    UPDATE_ACTIVE_WINDOW(state, payload) {
+      const updated = state.activeWindows.map((window) =>
+        window.windowId == payload.windowId ? payload : window
+      );
+      state.activeWindows = updated;
     },
     SET_WINDOW_STATE(state, payload) {
-      if (payload.windowState != "maximize") {
-        const updated = state.activeWindows.map((x) =>
-          x.windowId == payload.windowId
-            ? { ...x, windowState: payload.windowState }
-            : x
-        );
-        state.activeWindows = updated;
-      } else {
-        const updated = state.activeWindows.map((x) => {
-          return x.windowId == payload.windowId
-            ? { ...x, windowFullscreen: !x.windowFullscreen }
-            : x;
-        });
-        state.activeWindows = updated;
-      }
+      const window = state.activeWindows.find(
+        (window) => window.windowId == payload.windowId
+      );
+
       if (payload.windowState == "open") {
-        this.commit("SET_ZINDEX_WINDOW", payload.windowId);
+        window.windowState = payload.windowState;
+        setTimeout(() => {
+          this.commit("SET_ZINDEX_WINDOW", payload.windowId);
+        }, 1);
+      } else if (payload.windowState == "maximize") {
+        window.windowFullscreen = !window.windowFullscreen;
+        this.commit("UPDATE_ACTIVE_WINDOW", window);
       } else if (payload.windowState == "minimize") {
-        const filteredActives = state.activeWindows.filter(
-          (x) => x.windowState != "minimize"
+        window.windowState = payload.windowState;
+        const actives = state.activeWindows.find(
+          (window) => window.windowState != "minimize"
         );
-        this.commit(
-          "SET_ACTVIE_WINDOW",
-          filteredActives.length > 0 ? filteredActives[0].windowId : ""
-        );
+        this.commit("SET_ACTIVE_WINDOW", actives ? actives.windowId : "");
       }
     },
   },

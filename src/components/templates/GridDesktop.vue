@@ -18,22 +18,20 @@
 import { mapGetters } from "vuex";
 
 export default {
-  name: "GridDesktop",
   computed: {
     ...mapGetters(["windowList"]),
   },
   methods: {
     setActiveWindow(window, e) {
       e.stopPropagation();
-      this.$store.commit("SET_ACTVIE_WINDOW", window.windowId);
-      this.$store.commit("PUSH_ACTVIE_WINDOW", window);
+      this.$store.commit("PUSH_ACTIVE_WINDOW", window);
+      this.$store.commit("SET_ACTIVE_WINDOW", window.windowId);
       setTimeout(() => {
-        this.$store.commit("SET_ZINDEX_WINDOW", window.windowId);
         this.$store.commit("SET_WINDOW_STATE", {
           windowId: window.windowId,
           windowState: "open",
         });
-      }, 2);
+      }, 1);
     },
   },
 };
@@ -65,6 +63,7 @@ export default {
     border: none;
     outline: inherit;
     cursor: pointer;
+    user-select: none;
 
     &:focus .border {
       border: rgb(255, 255, 148) dotted 1px;
@@ -79,7 +78,8 @@ export default {
 
     & .icon {
       width: 30px;
-      height: 40px;
+      max-height: 30px;
+      min-height: 30px;
       margin-bottom: 8px;
     }
   }
