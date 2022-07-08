@@ -38,7 +38,7 @@ export default {
     ...mapGetters(["startMenuActive"]),
   },
   mounted() {
-    window.addEventListener("click", this.checkOutsite);
+    document.addEventListener("click", this.checkOutsite);
   },
   methods: {
     checkOutsite(event) {

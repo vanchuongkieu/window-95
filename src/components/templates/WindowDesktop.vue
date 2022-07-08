@@ -106,8 +106,8 @@ export default {
     ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
-        "--top": this.top + "%",
-        "--left": this.left + "%",
+        top: this.top + "%",
+        left: this.left + "%",
         "--transform": `translate(${this.x}px, ${this.y}px)`,
       };
     },
@@ -164,9 +164,8 @@ export default {
 .interact {
   height: 60vh;
   width: 60vw;
-  left: var(--left);
-  top: var(--top);
   position: absolute;
+  cursor: auto !important;
   animation: minimizeOpen 250ms forwards;
   transition: width 250ms ease-in-out, height 250ms ease-in-out,
     left 200ms ease-in-out, top 200ms ease-in-out;
@@ -190,7 +189,7 @@ export default {
       transform: var(--transform) scale(1);
     }
     100% {
-      top: 100%;
+      top: 100% !important;
       transform: var(--transform) scale(0);
       display: none;
     }
@@ -198,7 +197,7 @@ export default {
 
   @keyframes minimizeOpen {
     0% {
-      top: 100%;
+      top: 100% !important;
       transform: var(--transform) scale(0.5);
       display: none;
     }
