@@ -22,7 +22,7 @@ import WindowDesktop from "@/components/templates/WindowDesktop.vue";
 import TaskbarDesktop from "@/components/templates/TaskbarDesktop.vue";
 
 import DocumentFolder from "@/components/DocumentFolder.vue";
-import ProfileFolder from "@/components/ProfileFolder.vue";
+import ResumeFolder from "@/components/ResumeFolder.vue";
 
 import { mapGetters } from "vuex";
 
@@ -32,7 +32,7 @@ export default {
     WindowDesktop,
     TaskbarDesktop,
     DocumentFolder,
-    ProfileFolder,
+    ResumeFolder,
   },
   computed: {
     ...mapGetters(["activeWindows", "activeWindow"]),

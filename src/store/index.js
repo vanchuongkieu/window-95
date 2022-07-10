@@ -6,16 +6,26 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     zIndex: 2,
-    activeWindow: "",
-    activeWindows: [],
+    activeWindow: "resume",
+    activeWindows: [
+      {
+        windowId: "resume",
+        windowState: "open",
+        windowTitle: "Resume",
+        windowContent: "ResumeFolder",
+        windowComponent: "WindowDesktop",
+        windowIcon: "icon-file-find",
+        windowFullscreen: false,
+      },
+    ],
     windowList: [
       {
-        windowId: "biography",
+        windowId: "resume",
         windowState: "close",
-        windowTitle: "Biography",
-        windowContent: "ProfileFolder",
+        windowTitle: "Resume",
+        windowContent: "ResumeFolder",
         windowComponent: "WindowDesktop",
-        windowIcon: "icon-biography",
+        windowIcon: "icon-file-find",
         windowFullscreen: false,
       },
       {

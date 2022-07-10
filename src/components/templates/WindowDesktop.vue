@@ -65,9 +65,7 @@
         </div>
       </div>
       <div class="window-content">
-        <div class="window-content-scroll">
-          <slot name="content"></slot>
-        </div>
+        <slot name="content"></slot>
       </div>
     </div>
   </interact>
@@ -106,8 +104,8 @@ export default {
     ...mapGetters(["activeWindow", "getWindowById"]),
     style() {
       return {
-        top: this.top + "%",
-        left: this.left + "%",
+        "--top": this.top + "%",
+        "--left": this.left + "%",
         "--transform": `translate(${this.x}px, ${this.y}px)`,
       };
     },
@@ -162,8 +160,10 @@ export default {
 
 <style lang="scss" scoped>
 .interact {
-  height: 60vh;
-  width: 60vw;
+  height: 70vh;
+  width: 70vw;
+  top: var(--top);
+  left: var(--left);
   position: absolute;
   cursor: auto !important;
   animation: minimizeOpen 250ms forwards;
@@ -173,11 +173,6 @@ export default {
   @media (max-width: 768px) {
     width: 90vw;
     left: 5%;
-  }
-
-  @media (max-width: 968px) {
-    width: 80vw;
-    left: 10%;
   }
 
   &.minimize {
@@ -208,9 +203,9 @@ export default {
 
   &.maximize {
     width: 100%;
-    height: 100vh;
-    left: 0 !important;
-    top: 0 !important;
+    height: calc(100vh - 4rem);
+    left: 0;
+    top: 0;
   }
 }
 
@@ -299,7 +294,6 @@ export default {
     padding: 0.5rem;
     width: 100%;
     height: calc(100% - 25px);
-    overflow-y: auto;
   }
 }
 </style>

@@ -70,4 +70,58 @@ a {
   text-decoration: none;
   outline: none;
 }
+
+.button {
+  padding: 0 0.8rem;
+  height: 3rem;
+  box-shadow: 0.1rem 0.1rem #000;
+  border-top: 0.1rem solid #fafafa;
+  border-left: 0.1rem solid #fafafa;
+  border-bottom: 0.1rem solid #5a5a5a;
+  border-right: 0.1rem solid #5a5a5a;
+  background: silver;
+  align-items: center;
+  display: flex;
+  cursor: pointer;
+  padding-bottom: 0.2rem;
+  outline: none;
+  font-family: inherit;
+
+  @media (max-width: 768px) {
+    width: 10rem;
+  }
+
+  &-content {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+  }
+  font-size: 1rem;
+
+  span {
+    width: calc(100% - 18px);
+    margin-bottom: -0.2rem;
+    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis;
+    text-align: left;
+  }
+
+  &:active {
+    background: silver;
+    border: 0;
+  }
+
+  &-depressed,
+  &:active {
+    box-shadow: none;
+    border-top: 0.15rem solid #000;
+    border-left: 0.15rem solid #000;
+    border-bottom: 0.15rem solid #fafafa;
+    border-right: 0.15rem solid #fafafa;
+  }
+}
 </style>
