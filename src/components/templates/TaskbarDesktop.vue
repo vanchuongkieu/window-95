@@ -1,17 +1,17 @@
 <template>
   <div class="taskbar-wrapper">
     <div class="taskbar">
-      <div
+      <button
         ref="startMenuRef"
         @click="onActiveStartMenu"
         class="taskbar-item-active start-menu"
         :class="{ 'taskbar-item-active-depressed': startMenuActive }"
       >
-        <i class="icon icon-window"></i>
-        <span>Start</span>
-      </div>
-      <div
-        ref="taskbarItemRef"
+        <div class="taskbar-item-active-content">
+          <i class="icon icon-window"></i> <span>Start</span>
+        </div>
+      </button>
+      <button
         v-for="window in activeWindows"
         class="taskbar-item-active item"
         @click="setActiveMenu(window.windowId)"
@@ -20,9 +20,11 @@
         }"
         :key="window.windowId"
       >
-        <i class="icon" :class="window.windowIcon"></i>
-        <span>{{ window.windowTitle }}</span>
-      </div>
+        <div class="taskbar-item-active-content">
+          <i class="icon" :class="window.windowIcon"></i>
+          <span>{{ window.windowTitle }}</span>
+        </div>
+      </button>
       <div class="taskbar-time">
         <time ref="time"> {{ time }} </time>
       </div>
@@ -34,6 +36,7 @@
 <script>
 import moment from "moment";
 import { mapGetters } from "vuex";
+
 import StartMenu from "./StartMenu.vue";
 
 export default {
@@ -98,16 +101,30 @@ export default {
     border-bottom: 0.1rem solid #5a5a5a;
     border-right: 0.1rem solid #5a5a5a;
     background: silver;
-    display: flex;
-    justify-content: flex-start;
     align-items: center;
+    display: flex;
     cursor: pointer;
     padding-bottom: 0.2rem;
-    gap: 0.5rem;
+    outline: none;
+    font-family: inherit;
 
     @media (max-width: 768px) {
       width: 10rem;
     }
+
+    &:focus .taskbar-item-active-content {
+      border: rgb(255, 255, 148) dotted 1px;
+    }
+
+    &-content {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+    font-size: 1rem;
 
     &.item {
       span {
@@ -116,10 +133,10 @@ export default {
         white-space: nowrap;
         overflow: hidden !important;
         text-overflow: ellipsis;
+        text-align: left;
       }
     }
 
-    outline: none;
     &:active {
       background: silver;
       border: 0;

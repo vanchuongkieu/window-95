@@ -65,4 +65,9 @@ body {
   width: 15px;
   background: repeating-conic-gradient(#bdbebd 0 25%, #fff 0 50%) 50%/2px 2px;
 }
+
+a {
+  text-decoration: none;
+  outline: none;
+}
 </style>

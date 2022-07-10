@@ -189,7 +189,7 @@ export default {
       transform: var(--transform) scale(1);
     }
     100% {
-      top: 100% !important;
+      top: 100%;
       transform: var(--transform) scale(0);
       display: none;
     }
@@ -197,7 +197,7 @@ export default {
 
   @keyframes minimizeOpen {
     0% {
-      top: 100% !important;
+      top: 100%;
       transform: var(--transform) scale(0.5);
       display: none;
     }

@@ -37,6 +37,13 @@ export default {
   computed: {
     ...mapGetters(["activeWindows", "activeWindow"]),
   },
+  created() {
+    if (process.env.ENV_NODE == "production") {
+      document.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+      });
+    }
+  },
 };
 </script>
 
@@ -46,6 +53,7 @@ export default {
   height: 100vh;
   position: relative;
   overflow: hidden;
+  user-select: none;
 
   &-screen {
     width: 100%;

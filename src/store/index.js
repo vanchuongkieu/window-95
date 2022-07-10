@@ -10,9 +10,9 @@ export default new Vuex.Store({
     activeWindows: [],
     windowList: [
       {
-        windowId: "profile",
+        windowId: "biography",
         windowState: "close",
-        windowTitle: "Profile",
+        windowTitle: "Biography",
         windowContent: "ProfileFolder",
         windowComponent: "WindowDesktop",
         windowIcon: "icon-biography",
@@ -83,6 +83,14 @@ export default new Vuex.Store({
       );
       state.activeWindows = updated;
     },
+    SET_FULLSCREEN_WINDOW(state, payload) {
+      const updated = state.activeWindows.map((window) =>
+        window.windowId == payload.windowId
+          ? { ...window, windowFullscreen: payload.windowFullscreen }
+          : window
+      );
+      state.activeWindows = updated;
+    },
     SET_WINDOW_STATE(state, payload) {
       const window = state.activeWindows.find(
         (window) => window.windowId == payload.windowId
@@ -94,8 +102,10 @@ export default new Vuex.Store({
           this.commit("SET_ZINDEX_WINDOW", payload.windowId);
         }, 1);
       } else if (payload.windowState == "maximize") {
-        window.windowFullscreen = !window.windowFullscreen;
-        this.commit("UPDATE_ACTIVE_WINDOW", window);
+        this.commit("SET_FULLSCREEN_WINDOW", {
+          windowId: window.windowId,
+          windowFullscreen: !window.windowFullscreen,
+        });
       } else if (payload.windowState == "minimize") {
         window.windowState = payload.windowState;
         const actives = state.activeWindows.find(
